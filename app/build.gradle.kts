@@ -54,6 +54,9 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:postgrest-kt:3.0.0")
     implementation("io.github.jan-tennert.supabase:storage-kt:3.0.0")
     implementation("io.ktor:ktor-client-android:3.0.0")
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
