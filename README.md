@@ -24,4 +24,14 @@ Actualmente no todas las funcionalidades están finalizadas ni estabilizadas.
 - Estados de lectura:
   - Pendiente
   - Leído
+  - Ninguno
 - Valoración de libros leídos
+  - Valoración de 1 a 5 estrellas
+
+## ROADMAP
+- [ ] Migración a Material 3
+- [ ] Implementación de temas dinámicos (claro, oscuro)
+- [ ] Mejoras en la UI/UX
+- [ ] Sincronización en la nube (supabase)
+- [ ] Integración con APIs de libros
+- [ ] Notificaciones y recordatorios
