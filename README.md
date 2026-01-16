@@ -35,3 +35,7 @@ Actualmente no todas las funcionalidades están finalizadas ni estabilizadas.
 - [ ] Sincronización en la nube (supabase)
 - [ ] Integración con APIs de libros
 - [ ] Notificaciones y recordatorios
+
+## Cosas a solucionar
+- [ ] Error en la consulta a la base de datos
+- [ ] Hay una excepcion con la url de la bbdd
