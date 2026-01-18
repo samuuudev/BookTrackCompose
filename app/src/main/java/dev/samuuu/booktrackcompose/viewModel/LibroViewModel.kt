@@ -19,7 +19,7 @@ data class LibrosUiState(
 )
 
 class LibroViewModel(
-    private val repository:  LibroRepository
+    private val repository: LibroRepository
 ) : ViewModel() {
 
     companion object {
@@ -30,60 +30,95 @@ class LibroViewModel(
     val uiState: StateFlow<LibrosUiState> = _uiState.asStateFlow()
 
     init {
-        Log. d(TAG, "🎬 ViewModel inicializado")
+        Log.d(TAG, "ViewModel inicializado")
     }
 
+
+    // Funciones para actualizar el estado de los libros, no se usan por que no se actualizar en la bbdd los datos
+    fun marcarEstado(libroId: Int, estado: String) {
+        viewModelScope.launch {
+            try {
+                // Actualiza el estado en la base de datos
+                repository.actualizarEstadoLibro(libroId, estado)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error al actualizar el estado del libro: ${e.message}")
+            }
+        }
+    }
+
+    fun marcarFavorito(libroId: Int, favorito: Boolean) {
+        viewModelScope.launch {
+            try {
+                // Actualiza el estado de favorito en la base de datos
+                repository.actualizarFavoritoLibro(libroId, favorito)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error al actualizar favorito del libro: ${e.message}")
+            }
+        }
+    }
+
+    fun marcarPendiente(libroId: Int, pendiente: Boolean) {
+        viewModelScope.launch {
+            try {
+                // Actualiza el estado de pendiente en la base de datos
+                repository.actualizarPendienteLibro(libroId, pendiente)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error al actualizar pendiente del libro: ${e.message}")
+            }
+        }
+    }
+
+
     fun cargarLibros() {
-        Log.d(TAG, "📖 cargarLibros() llamado")
+        Log.d(TAG, "cargarLibros() llamado")
 
         viewModelScope.launch {
-            Log.d(TAG, "🔄 Iniciando carga de libros en coroutine...")
+            Log.d(TAG, "Iniciando carga de libros en coroutine...")
             _uiState.value = _uiState.value.copy(isLoading = true)
 
             try {
-                Log.d(TAG, "⏳ Esperando respuesta del repository...")
+                Log.d(TAG, "Esperando respuesta del repository...")
                 val libros = repository.obtenerLibros()
 
-                Log. d(TAG, "✅ Libros recibidos en ViewModel: ${libros.size}")
+                Log.d(TAG, "Libros recibidos en ViewModel: ${libros.size}")
                 libros.forEachIndexed { index, libro ->
-                    Log.d(TAG, "   [$index] ${libro.titulo} - ${libro.autor}")
+                    Log.d(TAG, "[$index] ${libro.titulo} - ${libro.autor}")
                 }
 
-                _uiState. value = _uiState.value.copy(
+                _uiState.value = _uiState.value.copy(
                     libros = libros,
                     isLoading = false,
                     mensaje = null
                 )
-                Log.d(TAG, "✅ Estado actualizado con ${libros.size} libros")
+                Log.d(TAG, "Estado actualizado con ${libros.size} libros")
 
             } catch (e: Exception) {
-                Log.e(TAG, "❌ Error en cargarLibros(): ${e.message}")
-                Log.e(TAG, "❌ Tipo:  ${e.javaClass.simpleName}")
-                Log.e(TAG, "❌ Causa: ${e.cause?. message}")
+                Log.e(TAG, "Error en cargarLibros(): ${e.message}")
+
 
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    mensaje = "Error al cargar libros:  ${e.message}"
+                    mensaje = "Error al cargar libros: ${e.message}"
                 )
             }
         }
     }
 
     fun cargarLibrosAgrupadosPorGenero() {
-        Log.d(TAG, "📖 cargarLibrosAgrupadosPorGenero() llamado")
+        Log.d(TAG, "cargarLibrosAgrupadosPorGenero() llamado")
 
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
 
             try {
-                Log. d(TAG, "⏳ Obteniendo libros para agrupar...")
+                Log.d(TAG, "Obteniendo libros para agrupar...")
                 val libros = repository. obtenerLibros()
 
-                Log. d(TAG, "📊 Agrupando ${libros.size} libros por género...")
+                Log.d(TAG, "Agrupando ${libros.size} libros por género...")
                 val agrupadosPorGenero = libros.groupBy { it.genero }
 
                 agrupadosPorGenero. forEach { (genero, listaLibros) ->
-                    Log.d(TAG, "   → $genero: ${listaLibros.size} libros")
+                    Log.d(TAG, "$genero: ${listaLibros.size} libros")
                 }
 
                 _uiState.value = _uiState.value.copy(
@@ -91,10 +126,10 @@ class LibroViewModel(
                     isLoading = false,
                     mensaje = null
                 )
-                Log.d(TAG, "✅ Estado actualizado con libros agrupados")
+                Log.d(TAG, "Estado actualizado con libros agrupados")
 
             } catch (e: Exception) {
-                Log.e(TAG, "❌ Error en cargarLibrosAgrupadosPorGenero(): ${e.message}")
+                Log.e(TAG, "Error en cargarLibrosAgrupadosPorGenero(): ${e.message}")
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     mensaje = "Error al cargar libros: ${e. message}"
@@ -103,26 +138,26 @@ class LibroViewModel(
         }
     }
 
-    fun agregarLibro(libro:  Libro) {
-        Log.d(TAG, "➕ agregarLibro() llamado para: ${libro.titulo}")
+    fun agregarLibro(libro: Libro) {
+        Log.d(TAG, "agregarLibro() llamado para: ${libro.titulo}")
 
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
 
             try {
-                Log. d(TAG, "⏳ Enviando libro al repository...")
+                Log.d(TAG, "Enviando libro al repository...")
                 repository.crearLibro(libro)
 
-                Log.d(TAG, "✅ Libro creado, recargando lista...")
+                Log.d(TAG, "Libro creado, recargando lista...")
                 cargarLibros()
 
                 _uiState.value = _uiState.value.copy(
                     mensaje = "Libro añadido correctamente"
                 )
-                Log. d(TAG, "✅ Mensaje de éxito establecido")
+                Log.d(TAG, "Mensaje de éxito establecido")
 
             } catch (e: Exception) {
-                Log.e(TAG, "❌ Error en agregarLibro(): ${e.message}")
+                Log.e(TAG, "Error en agregarLibro(): ${e.message}")
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     mensaje = "Error al añadir libro: ${e.message}"
@@ -131,8 +166,17 @@ class LibroViewModel(
         }
     }
 
+    fun mostrarError(mensaje: String) {
+        Log.d(TAG, "Mostrando mensaje de error: $mensaje")
+        _uiState.value = _uiState.value.copy(mensaje = mensaje)
+    }
+
+    fun getLibroById(id: Int): Libro? {
+        return uiState.value.libros.find { it.id == id }
+    }
+
     fun limpiarMensaje() {
-        Log.d(TAG, "🧹 Limpiando mensaje")
+        Log.d(TAG, "Limpiando mensaje")
         _uiState.value = _uiState.value.copy(mensaje = null)
     }
 }

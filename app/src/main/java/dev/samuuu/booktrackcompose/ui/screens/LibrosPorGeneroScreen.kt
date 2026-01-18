@@ -1,5 +1,6 @@
 package dev.samuuu.booktrackcompose.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -21,7 +22,7 @@ import dev.samuuu.booktrackcompose.viewModel.LibroViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LibrosPorGeneroScreen(viewModel: LibroViewModel) {
+fun LibrosPorGeneroScreen(viewModel: LibroViewModel, onLibroClick: (Libro) -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -50,7 +51,7 @@ fun LibrosPorGeneroScreen(viewModel: LibroViewModel) {
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
-                uiState. librosPorGenero.isEmpty() -> {
+                uiState.librosPorGenero.isEmpty() -> {
                     Column(
                         modifier = Modifier.align(Alignment.Center),
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -73,7 +74,7 @@ fun LibrosPorGeneroScreen(viewModel: LibroViewModel) {
                     ) {
                         uiState.librosPorGenero.forEach { (genero, libros) ->
                             item(key = genero.name) {
-                                GeneroSection(genero = genero, libros = libros)
+                                GeneroSection(genero = genero, libros = libros, onLibroClick = onLibroClick)
                             }
                         }
                     }
@@ -84,7 +85,7 @@ fun LibrosPorGeneroScreen(viewModel: LibroViewModel) {
 }
 
 @Composable
-fun GeneroSection(genero: Genero, libros: List<Libro>) {
+fun GeneroSection(genero: Genero, libros: List<Libro>, onLibroClick: (Libro) -> Unit) {
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
         Row(
             modifier = Modifier
@@ -108,16 +109,18 @@ fun GeneroSection(genero: Genero, libros: List<Libro>) {
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(libros, key = { it.id ?: it.hashCode() }) { libro ->
-                LibroCardHorizontal(libro = libro)
+                LibroCardHorizontal(libro = libro, onClick = onLibroClick)
             }
         }
     }
 }
 
 @Composable
-fun LibroCardHorizontal(libro: Libro) {
+fun LibroCardHorizontal(libro: Libro, onClick: (Libro) -> Unit) {
     Card(
-        modifier = Modifier.width(140.dp),
+        modifier = Modifier
+            .width(140.dp)
+            .clickable { onClick(libro) }, // Cuando se haga clic, llamará a onClick
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
@@ -135,6 +138,7 @@ fun LibroCardHorizontal(libro: Libro) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Mostrar título del libro
             Text(
                 text = libro.titulo,
                 style = MaterialTheme.typography.bodyMedium,
@@ -142,13 +146,17 @@ fun LibroCardHorizontal(libro: Libro) {
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
+
+            // Mostrar autor del libro
             Text(
                 text = libro.autor,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
-                overflow = TextOverflow. Ellipsis
+                overflow = TextOverflow.Ellipsis
             )
+
+            // Valoración en estrellas
             Row {
                 repeat(libro.valoracion) {
                     Text("⭐", style = MaterialTheme.typography.labelSmall)
@@ -170,6 +178,8 @@ fun getGeneroEmoji(genero: Genero): String {
         Genero.BIOGRAFIA -> "👤"
         Genero.HISTORIA -> "🏛️"
         Genero.INFANTIL -> "🧒"
+        Genero.NOVELA -> "📚"
+        Genero.AVENTURA -> "🏕️"
         Genero.OTRO -> "📚"
     }
 }

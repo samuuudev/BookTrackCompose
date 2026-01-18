@@ -1,5 +1,7 @@
 package dev.samuuu.booktrackcompose.screens
 
+import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,8 +20,10 @@ import dev.samuuu.booktrackcompose.viewModel.LibroViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LibrosScreen(viewModel: LibroViewModel) {
+fun LibrosScreen(viewModel: LibroViewModel, onLibroClick: (Libro) -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
+
+    Log.d("LibrosScreen", "uiState: $uiState")
 
     LaunchedEffect(Unit) {
         viewModel.cargarLibros()
@@ -30,7 +34,6 @@ fun LibrosScreen(viewModel: LibroViewModel) {
             TopAppBar(
                 title = { Text("📚 Mis Libros") },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             )
@@ -49,14 +52,14 @@ fun LibrosScreen(viewModel: LibroViewModel) {
                 }
                 uiState.libros.isEmpty() -> {
                     Column(
-                        modifier = Modifier. align(Alignment.Center),
-                        horizontalAlignment = Alignment. CenterHorizontally
+                        modifier = Modifier.align(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
                             text = "📖",
                             style = MaterialTheme.typography.displayLarge
                         )
-                        Spacer(modifier = Modifier. height(8.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = "No hay libros todavía",
                             style = MaterialTheme.typography.titleMedium
@@ -64,7 +67,7 @@ fun LibrosScreen(viewModel: LibroViewModel) {
                         Text(
                             text = "¡Añade tu primer libro!",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme. onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -74,8 +77,8 @@ fun LibrosScreen(viewModel: LibroViewModel) {
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        items(uiState.libros, key = { it.id ?:  it.hashCode() }) { libro ->
-                            LibroCard(libro = libro)
+                        items(uiState.libros, key = { it.id ?: it.hashCode() }) { libro ->
+                            LibroCard(libro = libro, onClick = onLibroClick)
                         }
                     }
                 }
@@ -85,7 +88,7 @@ fun LibrosScreen(viewModel: LibroViewModel) {
             uiState.mensaje?.let { mensaje ->
                 Snackbar(
                     modifier = Modifier
-                        .align(Alignment. BottomCenter)
+                        .align(Alignment.BottomCenter)
                         .padding(16.dp),
                     action = {
                         TextButton(onClick = { viewModel.limpiarMensaje() }) {
@@ -101,55 +104,47 @@ fun LibrosScreen(viewModel: LibroViewModel) {
 }
 
 @Composable
-fun LibroCard(libro: Libro) {
+fun LibroCard(libro: Libro, onClick: (Libro) -> Unit) {
     Card(
-        modifier = Modifier. fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick(libro) },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-            Row(
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+        ) {
+            // Imagen de la portada del libro
+            AsyncImage(
+                model = libro.imagenUrl ?: "",
+                contentDescription = libro.titulo,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp)
-            ) {
-                AsyncImage(
-                    model = libro.imagenUrl ?: "",
-                    contentDescription = libro.titulo ?: "Libro",
-                    modifier = Modifier
-                        .size(80.dp, 120.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop
+                    .size(80.dp, 120.dp),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            // Información básica del libro
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = libro.titulo,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
                 )
+                Text(
+                    text = libro.autor,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(4.dp))
 
-                Spacer(modifier = Modifier. width(12.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = libro.titulo ?: "Sin título",
-                        style = MaterialTheme. typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = libro.autor ?: "Autor desconocido",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    AssistChip(
-                        onClick = { },
-                        label = { Text(libro.genero?.name?.replace("_", " ") ?: "Sin género") }
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Row {
-                        repeat(5) { index ->
-                            Text(
-                                text = if (index < (libro.valoracion ?: 0)) "⭐" else "☆",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-                    }
-                    Text(
-                        text = "Estado: ${libro.estado ?: "Desconocido"}",
-                    style = MaterialTheme. typography.bodySmall
+                // Género del libro (sin estado ni pendiente)
+                AssistChip(
+                    onClick = { },
+                    label = { Text(libro.genero.name.replace("_", " ")) }
                 )
             }
         }

@@ -28,14 +28,21 @@ Actualmente no todas las funcionalidades están finalizadas ni estabilizadas.
 - Valoración de libros leídos
   - Valoración de 1 a 5 estrellas
 
-## ROADMAP
-- [ ] Migración a Material 3
-- [ ] Implementación de temas dinámicos (claro, oscuro)
-- [ ] Mejoras en la UI/UX
-- [ ] Sincronización en la nube (supabase)
-- [ ] Integración con APIs de libros
-- [ ] Notificaciones y recordatorios
 
-## Cosas a solucionar
-- [ ] Error en la consulta a la base de datos
-- [ ] Hay una excepcion con la url de la bbdd
+ARREGLAR - Filtrado de libros por género
+
+
+## Informacion de la app
+- SupaBaseClient.kt: Configura el cliente de Supabase con la URL y la clave de API.
+- Libro.kt: Define el modelo de datos para un libro.
+- LibroRemoteDataSource.kt: Maneja la comunicación con Supabase para obtener y agregar libros. (Es mi provider)
+- LibroRepository.kt: Actúa como intermediario entre la fuente de datos remota y el viewmodel. Ademas hace de control de excepciones que pueda ocasionar el remoteDataSource.
+- LibroViewModel.kt: Gestiona la lógica y los datos para las pantallas
+- LibroViewModelFactory.kt: Crea instancias de LibroViewModel con dependencias.
+- LibrosScreen.kt: Pantalla principal que muestra la lista de libros.
+- LibrosPorGeneroScreen.kt: Pantalla que muestra libros filtrados por género.
+- AgregarLibroScreen.kt: Pantalla para agregar nuevos libros al catálogo.
+- AppNavigation.kt: Configura la navegación entre las diferentes pantallas de la app desacoplando codigwo en MainActivity.
+- MainActivity.kt: Punto de entrada de la aplicación que configura la navegación.
+
+Hago un control de excepciones en el remoteDataSource, LibroRepository y LibroViewModel para asegurar que cada capa me aporte informacion en caso de error detectar donde falla, sabiendo que son innecesarios y con la opcion de delegar excepciones a la capa superior.

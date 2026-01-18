@@ -16,11 +16,9 @@ data class Libro(
     val autor: String,
     @SerialName("valoracion")
     val valoracion: Int,
-    @SerialName("estado")
-    val estado: String,
     @SerialName("imagenUrl")
     val imagenUrl: String,
     @SerialName("genero")
-    val genero: Genero
+    val genero: Genero,
 
 )

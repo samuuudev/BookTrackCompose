@@ -53,12 +53,18 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("io.coil-kt:coil-compose:2.6.0")
 
+    // Dependencias de material3 para evitar fallos en las ui screens
+    implementation("androidx.compose.ui:ui:1.5.0")
+    implementation("androidx.compose.material:material:1.5.0")
+    implementation("androidx.compose.material:material-icons-extended:1.5.0")
+
+    implementation("io.github.jan-tennert.supabase:supabase-kt:3.0.0")
     implementation("io.github.jan-tennert.supabase:postgrest-kt:3.0.0")
     implementation("io.github.jan-tennert.supabase:storage-kt:3.0.0")
     implementation("io.ktor:ktor-client-android:3.0.0")
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
-
+    implementation(libs.androidx.material3)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

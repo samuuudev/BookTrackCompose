@@ -22,9 +22,11 @@ fun AgregarLibroScreen(
     var imagenUrl by remember { mutableStateOf("") }
     var valoracion by remember { mutableIntStateOf(3) }
     var estado by remember { mutableStateOf("Por leer") }
-    var generoSeleccionado by remember { mutableStateOf(Genero.FICCION) } // CORREGIDO: Sin espacio
+    var generoSeleccionado by remember { mutableStateOf(Genero.FICCION) } // uso como valor por defecto FICCION usando mi enum
     var generoExpanded by remember { mutableStateOf(false) }
     var estadoExpanded by remember { mutableStateOf(false) }
+    var favoritoSeleccionado by remember { mutableStateOf(false) }
+    var pendienteSeleccionado by remember { mutableStateOf(false) }
 
     val estados = listOf("Por leer", "Leyendo", "Leído", "Abandonado")
     val uiState by viewModel.uiState.collectAsState()
@@ -40,7 +42,7 @@ fun AgregarLibroScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("➕ Añadir Libro") },
+                title = { Text("Añadir Libro") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -116,39 +118,6 @@ fun AgregarLibroScreen(
                 }
             }
 
-            // Selector de estado
-            ExposedDropdownMenuBox(
-                expanded = estadoExpanded,
-                onExpandedChange = { estadoExpanded = it }
-            ) {
-                OutlinedTextField(
-                    value = estado,
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Estado de lectura") },
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = estadoExpanded)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor()
-                )
-                ExposedDropdownMenu(
-                    expanded = estadoExpanded,
-                    onDismissRequest = { estadoExpanded = false }
-                ) {
-                    estados.forEach { est ->
-                        DropdownMenuItem(
-                            text = { Text(getEstadoEmoji(est) + " " + est) },
-                            onClick = {
-                                estado = est
-                                estadoExpanded = false
-                            }
-                        )
-                    }
-                }
-            }
-
             // Valoración con estrellas
             Column {
                 Text(
@@ -186,7 +155,6 @@ fun AgregarLibroScreen(
                                 "https://via.placeholder.com/150x200? text=${titulo.take(10)}"
                             },
                             valoracion = valoracion,
-                            estado = estado,
                             genero = generoSeleccionado
                         )
                         viewModel.agregarLibro(nuevoLibro)

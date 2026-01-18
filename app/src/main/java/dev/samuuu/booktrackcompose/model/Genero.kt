@@ -14,5 +14,7 @@ enum class Genero {
     BIOGRAFIA,
     HISTORIA,
     INFANTIL,
+    NOVELA,
+    AVENTURA,
     OTRO
 }
