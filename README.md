@@ -15,9 +15,6 @@ Actualmente no todas las funcionalidades están finalizadas ni estabilizadas.
 ---
 
 
-ARREGLAR - Filtrado de libros por género
-
-
 ## Informacion de la app
 - SupaBaseClient.kt: Configura el cliente de Supabase con la URL y la clave de API.
 - Libro.kt: Define el modelo de datos para un libro.
