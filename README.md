@@ -7,26 +7,12 @@ Incluyendo el aprendizaje sobre el desarrollo de aplicaciones moviles usando **A
 
 ---
 
-## 🚧 Estado del proyecto
-
 **En desarrollo activo**
 
 Este proyecto es una **reescritura/migración** de una versión anterior desarrollada con **Material 2**.
 Actualmente no todas las funcionalidades están finalizadas ni estabilizadas.
 
 ---
-
-## ✨ Funcionalidades principales
-
-- Catálogo de libros
-- Añadir libros manualmente al catálogo
-- Selección del libro en lectura
-- Estados de lectura:
-  - Pendiente
-  - Leído
-  - Ninguno
-- Valoración de libros leídos
-  - Valoración de 1 a 5 estrellas
 
 
 ARREGLAR - Filtrado de libros por género
